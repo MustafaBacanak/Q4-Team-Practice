@@ -4,10 +4,10 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -23,10 +23,8 @@ public abstract class TestBase {
     //  setUp
     @Before
     public void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--accept-cookies");
         WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver(options);
+        driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
     }
@@ -35,10 +33,10 @@ public abstract class TestBase {
     @After
     public void tearDown() throws InterruptedException {
         Thread.sleep(2000);
-//        driver.quit();
+        driver.quit();
     }
 
-    //    MULTIPLE WINDOW
+    //    MULTIPLE WINDOW TITLE
     public static void switchToWindow(String targetTitle) {
         String origin = driver.getWindowHandle();
         for (String handle : driver.getWindowHandles()) {
@@ -49,7 +47,6 @@ public abstract class TestBase {
         }
         driver.switchTo().window(origin);
     }
-
     //    MULTIPLE WINDOW URL
     public static void switchToWindowUrl(String targetUrl) {
         String origin = driver.getWindowHandle();
@@ -63,17 +60,19 @@ public abstract class TestBase {
     }
 
     //    MULTIPLE WINDOW INDEX
-    public static void switchToWindowIndex(int windowNumber){
+    public static void switchToWindow(int windowNumber){
         List<String> list = new ArrayList<>(driver.getWindowHandles());
         driver.switchTo().window(list.get(windowNumber));
     }
-
+    //    Find and wait ID
     public static WebElement findId(String key){
 
         WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(15));
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(key)));
         return element;
     }
+
+    //    Find and wait Css
     public static WebElement findCss(String key){
 
         WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(15));
@@ -81,6 +80,7 @@ public abstract class TestBase {
         return element;
     }
 
+    //    Find and wait xPath
     public static WebElement findXPath(String key){
 
         WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(15));
@@ -88,34 +88,43 @@ public abstract class TestBase {
         return element;
     }
 
-    // RESUABLE METHOD :Dropdown icin tekrar tekrar kullanabilecegimiz method olusturalim
-    public void selectFromDropDown(WebElement dropdown, String secenek) {
+    //Js Executer Css
+    public static void jsExecuterCss(String key){
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        WebElement elementName = driver.findElement(By.cssSelector(key));
+        js.executeScript("arguments[0].click();",elementName);
+    }
 
-        List<WebElement> options = dropdown.findElements(By.tagName("option"));//Tum option'lari return eder
-        for (WebElement w : options) {
-            if (w.getText().equals(secenek)) {
-                w.click();
-                break;
-            }
+    //Js Executer xPath
+    public static void jsExecuterXPath(String key){
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        WebElement elementName = driver.findElement(By.xpath(key));
+        js.executeScript("arguments[0].click();",elementName);
+    }
+
+    //    HARD WAIT: @param : second
+    public static void waitFor(int seconds){
+        try {
+            Thread.sleep(seconds*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
     public static void clickWithText(String key, String text){
 
-        List<WebElement> elements = driver.findElements(By.cssSelector(key));
-//        for (int i = 0; i < elements.size(); i++) {
-//            if (elements.get(i).getText().equals(text)){
-//                elements.get(i).click();
-//            }
-//        }
-        for (WebElement w : elements){
-            if ((w.getText()).equals(text)){
-                w.click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        List<WebElement> element = wait.until(ExpectedConditions.visibilityOfAllElements(driver.findElements(By.cssSelector(key))));
+
+        for (int i = 0; i < element.size(); i++) {
+            if (element.get(i).getText().equals(text)){
+                element.get(i).click();
             }
         }
-
+//        for (WebElement w : options){
+//            if (w.getText().equals(text)){
+//                w.click();
+//            }
+//        }
     }
 }
-
-
-

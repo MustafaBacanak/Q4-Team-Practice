@@ -44,5 +44,6 @@ public class P04 extends TestBase {
         //10. Verify that user is navigated to login page
         Assert.assertTrue(loginText);
 
+
     }
 }
