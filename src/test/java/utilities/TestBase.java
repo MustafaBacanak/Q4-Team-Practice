@@ -85,14 +85,14 @@ public abstract class TestBase {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(key)));
     }
 
-    //Js Executer Css
+    //  Js Executer Css
     public static void jsExecuterCss(String key){
         JavascriptExecutor js = (JavascriptExecutor) driver;
         WebElement elementName = driver.findElement(By.cssSelector(key));
         js.executeScript("arguments[0].click();",elementName);
     }
 
-    //Js Executer xPath
+    //  Js Executer xPath
     public static void jsExecuterXPath(String key){
         JavascriptExecutor js = (JavascriptExecutor) driver;
         WebElement elementName = driver.findElement(By.xpath(key));
