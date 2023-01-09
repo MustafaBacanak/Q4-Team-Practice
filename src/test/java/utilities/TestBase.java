@@ -33,7 +33,7 @@ public abstract class TestBase {
     @After
     public void tearDown() throws InterruptedException {
         Thread.sleep(2000);
-        driver.quit();
+//        driver.quit();
     }
 
     //    MULTIPLE WINDOW TITLE
